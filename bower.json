@@ -1,0 +1,10 @@
+{
+  "name": "movie_game_receiver",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": null,
+    "backbone": null,
+    "underscore": null,
+    "bootstrap": null
+  }
+}

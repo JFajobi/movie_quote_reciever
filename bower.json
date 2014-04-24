@@ -5,6 +5,7 @@
     "jquery": null,
     "backbone": null,
     "underscore": null,
-    "bootstrap": null
+    "bootstrap": null,
+    "backbone.localStorage": null
   }
 }

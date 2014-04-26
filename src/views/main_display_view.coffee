@@ -8,6 +8,7 @@ class Movie.Views.MainDisplayView extends Backbone.View
     @loadCastRequirements()
     @playerOne = {ready: false, name: null}
     @playerTwo = {ready: false, name: null}
+    @notStarted = true
 
 
   loadCastRequirements: ->
@@ -26,8 +27,8 @@ class Movie.Views.MainDisplayView extends Backbone.View
 
     if message.displayMessage
       @displayMessage = message.displayMessage
-      window.clearInterval(@message) if @message?
-      @message = window.setInterval(@pulsate, 700)
+      clearInterval(@message) if @message?
+      @message = setInterval(@pulsate, 700)
     if message.playerNumber
       @setPlayerNumber(message.playerNumber)
     if message.setPlayerName
@@ -47,7 +48,7 @@ class Movie.Views.MainDisplayView extends Backbone.View
         @customMessageBus.broadcast("start")
       , 2000 # TODO add a message stating that it is single player mode
     else
-      @launchGame = window.setInterval(@launchMultiplayer, 4000)
+      @launchGame = setInterval(@launchMultiplayer, 4000)
 
   setPlayerAsReady:(playerId) =>
     if @playerOne.senderId == playerId
@@ -57,25 +58,27 @@ class Movie.Views.MainDisplayView extends Backbone.View
       
 
   launchMultiplayer: =>
-    if @playerOne.ready && @playerTwo.ready
-      window.clearInterval(@launchGame)
+    if @playerOne.ready && @playerTwo.ready && @notStarted
       @launchGame = 0 # in the off chance clearInterval does not work
-      @setVsView()
+      clearInterval(@launchGame)
+      @setVsView(@playerOne.name, @playerTwo.name)
       # TODO Send message to player 1 to play sound
       setTimeout =>
         @customMessageBus.broadcast("start")
       , 2500
+      @notStarted = false # hacky way to insure launchMultiplayer does not get called again TODO fix and 
+                          # determine why clearInterval does not work
       
       
-  setVsView: =>
-    $('#player1').html(@playerOne.name)
-    $('#player2').html(@playerTwo.name)
-    $('.logo-area').addClass("hidden")
-    setTimeout =>
-      $('.vs-view').fadeIn()
-    , 200
+  setVsView:(player1, player2) =>
+    vsView = new Movie.Views.VsView
+      el: ".container"
+      attributes:
+        player1: player1
+        player2: player2
 
-
+    vsView.render()
+    
   setPlayerName:(name, senderId) =>
     if @playerOne.name?
       @playerTwo.name = name

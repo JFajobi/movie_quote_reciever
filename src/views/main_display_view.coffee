@@ -45,6 +45,7 @@ class Movie.Views.MainDisplayView extends Backbone.View
   setPlayerNumber:(numberOfPlayers) =>
     if numberOfPlayers == 'single-player'
       setTimeout =>
+        # @customMessageBus.send(@playerOne.senderId, "round one") #TODO determin proper way to play music
         @customMessageBus.broadcast("start")
       , 2000 # TODO add a message stating that it is single player mode
     else
@@ -62,6 +63,7 @@ class Movie.Views.MainDisplayView extends Backbone.View
       @launchGame = 0 # in the off chance clearInterval does not work
       clearInterval(@launchGame)
       @setVsView(@playerOne.name, @playerTwo.name)
+      @customMessageBus.send(@playerOne.senderId, "round one")
       # TODO Send message to player 1 to play sound
       setTimeout =>
         @customMessageBus.broadcast("start")

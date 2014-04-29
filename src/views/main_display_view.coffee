@@ -60,8 +60,8 @@ class Movie.Views.MainDisplayView extends Backbone.View
 
   launchMultiplayer: =>
     if @playerOne.ready && @playerTwo.ready && @notStarted
-      @launchGame = 0 # in the off chance clearInterval does not work
       clearInterval(@launchGame)
+      @launchGame = 0 # in the off chance clearInterval does not work
       @setVsView(@playerOne.name, @playerTwo.name)
       @customMessageBus.send(@playerOne.senderId, "round one")
       # TODO Send message to player 1 to play sound

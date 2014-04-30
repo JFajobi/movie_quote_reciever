@@ -6,8 +6,8 @@ class Movie.Views.MainDisplayView extends Backbone.View
 
   initialize: ->
     @loadCastRequirements()
-    @playerOne = {ready: false, name: null}
-    @playerTwo = {ready: false, name: null}
+    @playerOne = {ready: false, name: null, score: null, senderId: null}
+    @playerTwo = {ready: false, name: null, score: null, senderId: null}
     @notStarted = true
 
 
@@ -31,15 +31,38 @@ class Movie.Views.MainDisplayView extends Backbone.View
       @message = setInterval(@pulsate, 700)
     if message.playerNumber
       @setPlayerNumber(message.playerNumber)
-    if message.setPlayerName
-      @setPlayerName(message.setPlayerName, e.senderId)
+    if message.setPlayerInfo
+      @setPlayerInfo(message.setPlayerName, e.senderId)
     if message.ready
       @setPlayerAsReady(e.senderId)
+    if message.results
+      @results = setInterval(@displayResults(message.results, e.senderId), 4000)
 
     
   pulsate: =>
     $("#message").html(@displayMessage)
     $("#message").fadeToggle()
+
+  #
+  # creates and displays a result view for multiplayer
+  #
+  displayResults:(score, senderId) =>
+    @gatheringResultInfo = true
+    if @playerOne.senderId == senderId
+      @playerOne.score = score
+    else
+      @playerTwo.score = score
+
+    if @playerOne.score && @playerTwo.score && @gatheringResultInfo # fail safe since clearinterval doesnt seem to work
+      clearInterval(@results)
+      resultsView = new Movie.Views.ResultsView
+      el: ".container"
+      attributes:
+        playerOne: @playerOne
+        playerTwo: @playerTwo
+
+      @gatheringResultInfo = false
+      resultsView.render()
       
     
   setPlayerNumber:(numberOfPlayers) =>
@@ -80,8 +103,11 @@ class Movie.Views.MainDisplayView extends Backbone.View
         player2: player2
 
     vsView.render()
-    
-  setPlayerName:(name, senderId) =>
+  
+  #
+  # function used to set the players name and session id
+  #  
+  setPlayerInfo:(name, senderId) =>
     if @playerOne.name?
       @playerTwo.name = name
       @playerTwo.senderId = senderId

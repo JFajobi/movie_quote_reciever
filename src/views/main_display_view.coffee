@@ -32,7 +32,7 @@ class Movie.Views.MainDisplayView extends Backbone.View
     if message.playerNumber
       @setPlayerNumber(message.playerNumber)
     if message.setPlayerInfo
-      @setPlayerInfo(message.setPlayerName, e.senderId)
+      @setPlayerInfo(message.setPlayerInfo, e.senderId)
     if message.ready
       @setPlayerAsReady(e.senderId)
     if message.results
@@ -56,10 +56,10 @@ class Movie.Views.MainDisplayView extends Backbone.View
     if @playerOne.score && @playerTwo.score && @gatheringResultInfo # fail safe since clearinterval doesnt seem to work
       clearInterval(@results)
       resultsView = new Movie.Views.ResultsView
-      el: ".container"
-      attributes:
-        playerOne: @playerOne
-        playerTwo: @playerTwo
+        el: ".container"
+        attributes:
+          playerOne: @playerOne
+          playerTwo: @playerTwo
 
       @gatheringResultInfo = false
       resultsView.render()
